@@ -61,4 +61,8 @@ export class Navigator {
 
     await this.rendCtx.navigator.gotoBegin();
   }
+
+  onViewportResize() {
+    console.log("resized");
+  }
 }
