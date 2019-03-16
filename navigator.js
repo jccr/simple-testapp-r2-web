@@ -10,16 +10,23 @@ import {
 } from "./node_modules/@readium/navigator-web/dist/readium-navigator-web.esm.js";
 
 export class Navigator {
-  constructor(element) {
-    this.viewportRoot = element;
-    this.props = {
-      viewAsVertical: false,
-      viewportHeight: 600,
-      viewportWidth: 800,
-      pageHeight: 600,
-      pageWidth: 800,
-      enableScroll: false
-    };
+  constructor(viewportRoot) {
+    this.viewportRoot = viewportRoot;
+
+    this.viewportElement = document.createElement('div');
+    this.viewportRoot.appendChild(this.viewportElement)
+
+    this.viewAsVertical = false;
+    this.enableScroll = false;
+
+    this._calcViewportDimensions();
+  }
+
+  _calcViewportDimensions() {
+    this.viewportHeight = this.viewportRoot.clientHeight;
+    this.viewportWidth = this.viewportRoot.clientWidth;
+    this.pageHeight = this.viewportRoot.clientHeight;
+    this.pageWidth = this.viewportRoot.clientWidth;
   }
 
   async openPublication(webpubUrl) {
@@ -29,13 +36,14 @@ export class Navigator {
     loader.setReadiumCssBasePath(`/assets/readium-css`);
 
     const cvf = new ContentViewFactory(loader);
-    const rendition = new Rendition(this.publication, this.viewportRoot, cvf);
-    rendition.setViewAsVertical(this.props.viewAsVertical);
 
-    const viewportSize = this.props.viewAsVertical
+    const rendition = new Rendition(this.publication, this.viewportElement, cvf);
+    rendition.setViewAsVertical(this.viewAsVertical);
+
+    const viewportSize = this.viewAsVertical
       ? this.viewportHeight
       : this.viewportWidth;
-    const viewportSize2nd = this.props.viewAsVertical
+    const viewportSize2nd = this.viewAsVertical
       ? this.viewportWidth
       : this.viewportHeight;
 
@@ -43,26 +51,49 @@ export class Navigator {
     rendition.viewport.setPrefetchSize(Math.ceil(viewportSize * 0.1));
     rendition.setPageLayout({
       spreadMode: SpreadMode.FitViewportAuto,
-      pageWidth: this.props.pageWidth,
-      pageHeight: this.props.pageHeight
+      pageWidth: this.pageWidth,
+      pageHeight: this.pageHeight
     });
 
     rendition.render();
 
-    const scrollMode = this.props.enableScroll
+    const scrollMode = this.enableScroll
       ? ScrollMode.Publication
       : ScrollMode.None;
     rendition.viewport.setScrollMode(scrollMode);
 
     this.rendCtx = new RenditionContext(rendition, loader);
+
+    this.navigator = this.rendCtx.navigator;
+    this.rendition = rendition;
     //this.props.onRenditionCreated(this.rendCtx);
 
-    this.resizer = new ViewportResizer(this.rendCtx, this.onViewportResize);
+    this.resizer = new ViewportResizer(this.rendCtx, () => {
+      this.onViewportResize();
+    });
 
-    await this.rendCtx.navigator.gotoBegin();
+    await this.navigator.gotoBegin();
   }
 
   onViewportResize() {
-    console.log("resized");
+    this._calcViewportDimensions();
+
+    const viewportSize = this.viewAsVertical
+      ? this.viewportHeight
+      : this.viewportWidth;
+    const viewportSize2nd = this.viewAsVertical
+      ? this.viewportWidth
+      : this.viewportHeight;
+
+    this.rendition.viewport.setViewportSize(viewportSize, viewportSize2nd);
+    this.rendition.refreshPageLayout();
+  }
+
+  async nextScreen() {
+    return this.navigator.nextScreen();
+  }
+
+  async previousScreen() {
+    return this.navigator.previousScreen();
   }
 }
