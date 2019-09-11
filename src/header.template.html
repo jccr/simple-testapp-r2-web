@@ -1,0 +1,48 @@
+<template id="header">
+  <style>
+    menu {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      height: 100%;
+    }
+
+    menu button {
+      margin: 0.2em;
+      height: 3em;
+      width: 6em;
+    }
+
+    menu button.flip-page {
+      width: 3em;
+    }
+
+    menu li.label {
+      flex-grow: 1;
+      padding: 0.5em;
+    }
+
+    menu li.label.left {
+      text-align: right;
+    }
+  </style>
+  <menu>
+    <li>
+      <button class="action flip-page left">&lt;</button>
+    </li>
+    <li>
+      <button class="action flip-page right">&gt;</button>
+    </li>
+    <li>
+      <button class="action toc">TOC</button>
+    </li>
+    <li class="label title left">METAMORPHOSIS</li>
+    <li class="label title right">CHAPTER I</li>
+    <li>
+      <button class="action settings">Settings</button>
+    </li>
+    <li>
+      <button class="action bookmark">Bookmark</button>
+    </li>
+  </menu>
+</template>

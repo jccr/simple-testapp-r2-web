@@ -1,4 +1,4 @@
-* {
+html, body {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
@@ -19,6 +19,7 @@
 
   background: #ccc;
 }
+
 .sidebar {
   grid-column: 1 / 4;
   grid-row: 2 / -1;
@@ -31,6 +32,7 @@
   display: none;
   z-index: 10;
 }
+
 .content {
   grid-column: 1 / -1;
   grid-row: 2 / -1;
@@ -41,42 +43,14 @@
   grid-row: 2 / 12;
 }
 
-.sidebar.settings menu li {
-  margin: 0.2em;
-}
-
 menu {
   list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
-.toc nav li {
-  margin: 0.2em;
-}
-
-.header menu {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  height: 100%;
-}
-
-.header menu button {
-  margin: 0.2em;
-  height: 3em;
-  width: 6em;
-}
-
-.header menu button.flip-page {
-  width: 3em;
-}
-
-.header menu li.label {
-  flex-grow: 1;
-  padding: 0.5em;
-}
-
-.header menu li.label.left {
-  text-align: right;
+.content {
+  margin: 1em;
 }
 
 .viewport {
